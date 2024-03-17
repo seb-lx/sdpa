@@ -30,3 +30,15 @@
 *.exe
 *.out
 *.app
+
+.idea
+
+# Ignore CMake build directory
+cmake-build-debug/
+
+# Ignore CMake generated files
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+Makefile
