@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 
     // Parser to create AST
     Parser parser = Parser(tokens);
-    std::unique_ptr<Stmt> stmt = parser.parse();
+    std::shared_ptr<Stmt> stmt = parser.parse();
     stmt->print_node(0);
 
     /*

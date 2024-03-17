@@ -17,36 +17,36 @@ class AExp: public ASTNode {};
 class BExp: public ASTNode {};
 
 class OpA: public AExp {
-protected:
-    std::unique_ptr<AExp> lhs;
-    std::unique_ptr<AExp> rhs;
+public: //protected:
+    std::shared_ptr<AExp> lhs;
+    std::shared_ptr<AExp> rhs;
 
 public:
-    OpA(std::unique_ptr<AExp> lhs, std::unique_ptr<AExp> rhs):
+    OpA(std::shared_ptr<AExp> lhs, std::shared_ptr<AExp> rhs):
         lhs(std::move(lhs)), rhs(std::move(rhs)) {}
 
     void print_node(int indent) const override = 0;
 };
 
 class OpB: public BExp {
-protected:
-    std::unique_ptr<BExp> lhs;
-    std::unique_ptr<BExp> rhs;
+public: //protected:
+    std::shared_ptr<BExp> lhs;
+    std::shared_ptr<BExp> rhs;
 
 public:
-    OpB(std::unique_ptr<BExp> lhs, std::unique_ptr<BExp> rhs):
+    OpB(std::shared_ptr<BExp> lhs, std::shared_ptr<BExp> rhs):
         lhs(std::move(lhs)), rhs(std::move(rhs)) {}
 
     void print_node(int indent) const override = 0;
 };
 
 class OpR: public BExp {
-protected:
-    std::unique_ptr<AExp> lhs;
-    std::unique_ptr<AExp> rhs;
+public: //protected:
+    std::shared_ptr<AExp> lhs;
+    std::shared_ptr<AExp> rhs;
 
 public:
-    OpR(std::unique_ptr<AExp> lhs, std::unique_ptr<AExp> rhs):
+    OpR(std::shared_ptr<AExp> lhs, std::shared_ptr<AExp> rhs):
         lhs(std::move(lhs)), rhs(std::move(rhs)) {}
 
     void print_node(int indent) const override = 0;
@@ -65,10 +65,10 @@ public:
 
 class Block {
 protected:
-    std::unique_ptr<PP> pp;
+    std::shared_ptr<PP> pp;
 
 public:
-    explicit Block(std::unique_ptr<PP> pp): pp(std::move(pp)) {}
+    explicit Block(std::shared_ptr<PP> pp): pp(std::move(pp)) {}
 };
 
 class Var: public AExp {
@@ -76,6 +76,10 @@ class Var: public AExp {
 
 public:
     explicit Var(std::string var): var(std::move(var)) {}
+
+    bool operator<(const Var& other) const {
+        return var < other.var;
+    }
 
     void print_node(int indent) const override {
         std::cout << std::string(indent, ' ') << "Var(" << var << ")" << std::endl;
@@ -139,9 +143,9 @@ public:
 };
 
 class Not: public BExp {
-    std::unique_ptr<BExp> b_exp;
+    std::shared_ptr<BExp> b_exp;
 public:
-    explicit Not(std::unique_ptr<BExp> b_exp): b_exp(std::move(b_exp)) {}
+    explicit Not(std::shared_ptr<BExp> b_exp): b_exp(std::move(b_exp)) {}
 
     void print_node(int indent) const override {
         std::cout << std::string(indent, ' ') << "Not" << std::endl;
@@ -226,11 +230,11 @@ public:
 };
 
 class Ass: public Block, public Stmt {
-    std::unique_ptr<AExp> a_exp;
-    std::unique_ptr<Var> var;
+    std::shared_ptr<AExp> a_exp;
+    std::shared_ptr<Var> var;
 
 public:
-    Ass(std::unique_ptr<Var> var, std::unique_ptr<AExp> a_exp, std::unique_ptr<PP> pp):
+    Ass(std::shared_ptr<Var> var, std::shared_ptr<AExp> a_exp, std::shared_ptr<PP> pp):
         Block(std::move(pp)), var(std::move(var)), a_exp(std::move(a_exp)) {}
 
     void print_node(int indent) const override {
@@ -243,10 +247,10 @@ public:
 
 
 class Cond: public Block, public ASTNode {
-    std::unique_ptr<BExp> b_exp;
+    std::shared_ptr<BExp> b_exp;
 
 public:
-    Cond(std::unique_ptr<BExp> b_exp, std::unique_ptr<PP> pp):
+    Cond(std::shared_ptr<BExp> b_exp, std::shared_ptr<PP> pp):
         Block(std::move(pp)), b_exp(std::move(b_exp)) {}
 
     void print_node(int indent) const override {
@@ -257,11 +261,11 @@ public:
 };
 
 class SeqComp: public Stmt {
-    std::unique_ptr<Stmt> stmt_1;
-    std::unique_ptr<Stmt> stmt_2;
+    std::shared_ptr<Stmt> stmt_1;
+    std::shared_ptr<Stmt> stmt_2;
 
 public:
-    SeqComp(std::unique_ptr<Stmt> stmt_1, std::unique_ptr<Stmt> stmt_2):
+    SeqComp(std::shared_ptr<Stmt> stmt_1, std::shared_ptr<Stmt> stmt_2):
         stmt_1(std::move(stmt_1)), stmt_2(std::move(stmt_2)) {}
 
     void print_node(int indent) const override {
@@ -272,12 +276,12 @@ public:
 };
 
 class If: public Stmt {
-    std::unique_ptr<Cond> cond;
-    std::unique_ptr<Stmt> if_branch;
-    std::unique_ptr<Stmt> else_branch;
+    std::shared_ptr<Cond> cond;
+    std::shared_ptr<Stmt> if_branch;
+    std::shared_ptr<Stmt> else_branch;
 
 public:
-    If(std::unique_ptr<Cond> cond, std::unique_ptr<Stmt> if_branch, std::unique_ptr<Stmt> else_branch):
+    If(std::shared_ptr<Cond> cond, std::shared_ptr<Stmt> if_branch, std::shared_ptr<Stmt> else_branch):
         cond(std::move(cond)), if_branch(std::move(if_branch)), else_branch(std::move(else_branch)) {}
 
     void print_node(int indent) const override {
@@ -289,11 +293,11 @@ public:
 };
 
 class While: public Stmt {
-    std::unique_ptr<Cond> cond;
-    std::unique_ptr<Stmt> body;
+    std::shared_ptr<Cond> cond;
+    std::shared_ptr<Stmt> body;
 
 public:
-    While(std::unique_ptr<Cond> cond, std::unique_ptr<Stmt> body):
+    While(std::shared_ptr<Cond> cond, std::shared_ptr<Stmt> body):
             cond(std::move(cond)), body(std::move(body)) {}
 
     void print_node(int indent) const override {

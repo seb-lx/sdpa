@@ -14,4 +14,6 @@ add_executable(
         include/lexer.hpp
         include/ast.hpp
         include/utils.hpp
+        include/analysis_utils.hpp
+        src/analysis_utils.cpp
 )
