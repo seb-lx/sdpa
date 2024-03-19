@@ -20,8 +20,6 @@ std::set<Var> free_variables_a_exp(const std::shared_ptr<AExp> &a_exp) noexcept
             std::inserter(res, res.begin())
         );
         return res;
-    } else {
-        throw std::runtime_error("No valid AExp!");
     }
 }
 
@@ -53,8 +51,6 @@ std::set<Var> free_variables_b_exp(const std::shared_ptr<BExp> &b_exp) noexcept 
                 std::inserter(res, res.begin())
         );
         return res;
-    } else {
-        throw std::runtime_error("No valid BExp!");
     }
 }
 
@@ -111,8 +107,6 @@ std::set<Var> free_variables_stmt(const std::shared_ptr<Stmt> &stmt) noexcept {
                 std::inserter(res, res.begin())
         );
         return res;
-    } else {
-        throw std::runtime_error("No valid Stmt!");
     }
 }
 
@@ -159,7 +153,5 @@ std::set<PP> program_points(const std::shared_ptr<Stmt> &stmt) noexcept
                 std::inserter(res, res.begin())
         );
         return res;
-    } else {
-        throw std::runtime_error("No valid Stmt!");
     }
 }
