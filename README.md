@@ -25,6 +25,8 @@ Boolean expressions (𝐵𝐸𝑥𝑝)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| (𝑛𝑜𝑡 𝑏)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| (𝑏 𝑜𝑝𝑏 𝑏)
 
+#### Todo
+- shared pointer overhead? are there alternatives?
 
 <!---
 ## TODO

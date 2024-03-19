@@ -58,6 +58,18 @@ class PP: public ASTNode {
 public:
     explicit PP(unsigned int i): pp(i) {}
 
+    bool operator<(const PP& other) const {
+        return pp < other.pp;
+    }
+
+    bool operator==(const PP& other) const {
+        return pp == other.pp;
+    }
+
+    bool operator!=(const PP& other) const {
+        return !(*this == other); // using prev defined operator==
+    }
+
     void print_node(int indent) const override {
         std::cout << std::string(indent, ' ') << "PP(" << pp << ")" << std::endl;
     }
@@ -69,6 +81,8 @@ protected:
 
 public:
     explicit Block(std::shared_ptr<PP> pp): pp(std::move(pp)) {}
+
+    std::shared_ptr<PP> get_program_point() { return pp; }
 };
 
 class Var: public AExp {
@@ -79,6 +93,14 @@ public:
 
     bool operator<(const Var& other) const {
         return var < other.var;
+    }
+
+    bool operator==(const Var& other) const {
+        return var == other.var;
+    }
+
+    bool operator!=(const Var& other) const {
+        return !(*this == other); // using prev defined operator==
     }
 
     void print_node(int indent) const override {
@@ -143,6 +165,7 @@ public:
 };
 
 class Not: public BExp {
+public: //protected:
     std::shared_ptr<BExp> b_exp;
 public:
     explicit Not(std::shared_ptr<BExp> b_exp): b_exp(std::move(b_exp)) {}
@@ -230,6 +253,7 @@ public:
 };
 
 class Ass: public Block, public Stmt {
+public: //protected:
     std::shared_ptr<AExp> a_exp;
     std::shared_ptr<Var> var;
 
@@ -247,6 +271,7 @@ public:
 
 
 class Cond: public Block, public ASTNode {
+public: //protected:
     std::shared_ptr<BExp> b_exp;
 
 public:
@@ -261,6 +286,7 @@ public:
 };
 
 class SeqComp: public Stmt {
+public: //protected:
     std::shared_ptr<Stmt> stmt_1;
     std::shared_ptr<Stmt> stmt_2;
 
@@ -276,6 +302,7 @@ public:
 };
 
 class If: public Stmt {
+public: //protected:
     std::shared_ptr<Cond> cond;
     std::shared_ptr<Stmt> if_branch;
     std::shared_ptr<Stmt> else_branch;
@@ -293,6 +320,7 @@ public:
 };
 
 class While: public Stmt {
+public: //protected:
     std::shared_ptr<Cond> cond;
     std::shared_ptr<Stmt> body;
 

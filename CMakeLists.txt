@@ -16,4 +16,5 @@ add_executable(
         include/utils.hpp
         include/analysis_utils.hpp
         src/analysis_utils.cpp
+        test/test_analysis_utils.hpp
 )

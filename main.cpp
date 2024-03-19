@@ -3,6 +3,7 @@
 #include "lexer.hpp"
 #include "parser.hpp"
 #include "utils.hpp"
+#include "test/test_analysis_utils.hpp"
 
 
 std::string read_program(char* argv[], const std::string &filename)
@@ -20,11 +21,18 @@ std::string read_program(char* argv[], const std::string &filename)
     return program;
 }
 
-
-int main(int argc, char* argv[])
+void test()
 {
-    if (argc < 1) { std::cerr << "No command-line arguments provided." << std::endl; return 1; }
+    test_free_variables_a_exp_trivial(false);
+    test_free_variables_a_exp(false);
+    test_free_variables_a_exp_complex(false);
+    test_free_variables_stmt_complex(false);
 
+    test_program_points_complex(false);
+}
+
+void run(char* argv[])
+{
     // Read program from file
     std::string program = read_program(argv, "test.wlang");
 
@@ -42,6 +50,14 @@ int main(int argc, char* argv[])
     lv_res = lv.compute();
     tmp = None
     */
+}
+
+int main(int argc, char* argv[])
+{
+    if (argc < 1) { std::cerr << "No command-line arguments provided." << std::endl; return 1; }
+
+    test();
+    //run(argv);
 
     return 0;
 }

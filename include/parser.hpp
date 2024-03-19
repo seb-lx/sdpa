@@ -22,14 +22,14 @@ public:
     Token match(TokenType expected_type);
     void consume();
 
-    [[nodiscard]] std::unique_ptr<Stmt> parse();
-    [[nodiscard]] std::unique_ptr<Stmt> parse_statement();
-    [[nodiscard]] std::unique_ptr<Stmt> parse_basic_block();
-    [[nodiscard]] std::unique_ptr<Cond> parse_basic_block_condition();
-    [[nodiscard]] std::unique_ptr<Stmt> parse_skip_statement();
-    [[nodiscard]] std::unique_ptr<Stmt> parse_assignment_statement();
-    [[nodiscard]] std::unique_ptr<Stmt> parse_if_statement();
-    [[nodiscard]] std::unique_ptr<Stmt> parse_while_statement();
-    [[nodiscard]] std::unique_ptr<AExp> parse_arithmetic_expression();
-    [[nodiscard]] std::unique_ptr<BExp> parse_boolean_expression();
+    [[nodiscard]] std::shared_ptr<Stmt> parse();
+    [[nodiscard]] std::shared_ptr<Stmt> parse_statement();
+    [[nodiscard]] std::shared_ptr<Stmt> parse_basic_block();
+    [[nodiscard]] std::shared_ptr<Cond> parse_basic_block_condition();
+    [[nodiscard]] std::shared_ptr<Stmt> parse_skip_statement();
+    [[nodiscard]] std::shared_ptr<Stmt> parse_assignment_statement();
+    [[nodiscard]] std::shared_ptr<Stmt> parse_if_statement();
+    [[nodiscard]] std::shared_ptr<Stmt> parse_while_statement();
+    [[nodiscard]] std::shared_ptr<AExp> parse_arithmetic_expression();
+    [[nodiscard]] std::shared_ptr<BExp> parse_boolean_expression();
 };
