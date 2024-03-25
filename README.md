@@ -25,13 +25,14 @@ Boolean expressions (𝐵𝐸𝑥𝑝)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| (𝑛𝑜𝑡 𝑏)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| (𝑏 𝑜𝑝𝑏 𝑏)
 
-#### Todo
-- shared pointer overhead? are there alternatives?
+#### Notes
+Some implementations or design decisions might not be optimal and not that efficient or elegant, and could very likely be improved. I hope that I can improve it someday.
+For example, since no pattern matching exists, most of the utility functions that make a structural case distinction over Stmt are very cluttered, verbose, and not that readable but that seems to be the only way to do this. (?)
+Also, using smart pointers in the AST does not help making it less verbose. Most of the functions are implemented according to and in the mathematical style of the lecture, therefore, some operations might be redundant or and could be done more efficiently. However, this was not the intention.
+
 
 <!---
 ## TODO
-- implement == operator for Aexps and Bexps (look chatgpt last reply!!)
-
 
 - add a base class MonotoneFramework (formal frameworks for defining data-flow analyses) that has the abstract member variables and functions, then define the DFAs as subclasses and implement the abstract operations as concrete implementations. (look at SDPA module 4 slide 45)
 - add constraints for each DFA, i.e. LV analysis needs isolated exits etc. Implement that if the input does not fullfull requirement, that an empty skip statement is added.
