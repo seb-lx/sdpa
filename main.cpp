@@ -27,8 +27,18 @@ void test()
     test_free_variables_a_exp(false);
     test_free_variables_a_exp_complex(false);
     test_free_variables_stmt_complex(false);
-
     test_program_points_complex(false);
+    test_is_program_well_formed_complex(false);
+    test_program_point_occurrences(false);
+    test_elementary_blocks(false);
+    test_get_elementary_block(false);
+    test_initial_program_point(false);
+    test_is_program_point_initial(false);
+    test_final_program_points(false);
+    test_is_program_point_final(false);
+    test_control_flow(false);
+    test_has_isolated_entries(false);
+    test_has_isolated_exits(false);
 }
 
 void run(char* argv[])
