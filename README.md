@@ -26,9 +26,10 @@ Boolean expressions (𝐵𝐸𝑥𝑝)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| (𝑏 𝑜𝑝𝑏 𝑏)
 
 #### Notes
-Some implementations or design decisions might not be optimal and not that efficient or elegant, and could very likely be improved. I hope that I can improve it someday.\
+Some implementations or design decisions might not be optimal and not that efficient or elegant, and could very likely be improved.\
 For example, since no pattern matching exists, most of the utility functions that make a structural case distinction over Stmt are very cluttered, verbose, and not that readable but that seems to be the only way to do this. (?)\
-Also, using smart pointers in the AST does not help making it less verbose. Most of the functions are implemented according to and in the mathematical style of the lecture, therefore, some operations might be redundant or and could be done more efficiently. However, this was not the intention.
+Also, using smart pointers in the AST does not help making it less verbose.\
+Most of the functions are implemented according to and in the mathematical style of the lecture, therefore, some operations might be redundant or and could be done more efficiently. However, the idea was just to implement it as in the lecture.
 
 
 <!---
