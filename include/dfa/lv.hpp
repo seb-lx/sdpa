@@ -54,10 +54,8 @@ public:
     /*
      * The function F_LV that makes one analysis iteration.
      * vec = F_LV(vec)
-     *
-     * Use pass-by-reference to avoid copies.
      */
-    void F_LV(std::vector<std::set<Var>> &v) const;
+    [[nodiscard]] std::vector<std::set<Var>> F_LV(const std::vector<std::set<Var>> &v) const;
 
     /*
      * Checks whether a fixpoint is reached, i.e. the vectors contain the same sets with the same elements.
@@ -67,9 +65,14 @@ public:
                                                const std::vector<std::set<Var>> &vec_2);
 
     /*
+     * Injective function that maps indices {0, ... , n-1} to program points.
+     */
+    [[nodiscard]] PP f(unsigned int i) const;
+
+    /*
      * Generates a variable x for an elementary block iff x is read by this elementary block.
      */
-    [[nodiscard]] std::set<Var> get_LV(const std::shared_ptr<Block> &block) const;
+    [[nodiscard]] std::set<Var> gen_LV(const std::shared_ptr<Block> &block) const;
 
     /*
      * Kills a variable x for an elementary block iff x might be modified by this elementary block.

@@ -79,6 +79,7 @@ public:
 };
 
 class PP: public ASTNode {
+public:
     unsigned int pp;
 
 public:
