@@ -44,6 +44,8 @@ public:
             stmt(stmt), pps(program_points(stmt)), cf(control_flow(stmt)), final_pps(final_program_points(stmt))
     {
         this->n = pps.size();
+
+        this->check_analysis_constraints();
     }
 
     /*
@@ -78,4 +80,12 @@ public:
      * Kills a variable x for an elementary block iff x might be modified by this elementary block.
      */
     [[nodiscard]] std::set<Var> kill_LV(const std::shared_ptr<Block> &block) const;
+
+private:
+    /*
+     * This function checks whether the constraints for the LV-analysis are met,
+     * i.e. if the given statement/program has isolated exits.
+     * If not, a simple skip statement is added at the end to ensure it works correctly.
+     */
+    void check_analysis_constraints();
 };

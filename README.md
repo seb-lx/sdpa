@@ -34,8 +34,9 @@ Most of the functions are implemented according to and in the mathematical style
 
 <!---
 ## TODO
+- tests for LV analysis
+- multithreaded version F_LV
+- add constraints for each DFA, i.e. LV analysis needs isolated exits etc. Implement that if the input does not fullfull requirement, that an empty skip statement is added.
 
 - add a base class MonotoneFramework (formal frameworks for defining data-flow analyses) that has the abstract member variables and functions, then define the DFAs as subclasses and implement the abstract operations as concrete implementations. (look at SDPA module 4 slide 45)
-- add constraints for each DFA, i.e. LV analysis needs isolated exits etc. Implement that if the input does not fullfull requirement, that an empty skip statement is added.
-- maybe implement multi-threaded version of analyses, which was the primary reason to use tuple representation!
 -->

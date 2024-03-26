@@ -106,3 +106,10 @@ std::set<Var> LiveVariableAnalysis::kill_LV(const std::shared_ptr<Block> &block)
         throw std::runtime_error("Unknown Block!");
     }
 }
+
+void LiveVariableAnalysis::check_analysis_constraints()
+{
+    if (!has_isolated_exits(stmt)) {
+        // TODO: add skip statement, cout warning?
+    }
+}
