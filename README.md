@@ -1,6 +1,6 @@
 # sdpa
 
-This is an implementation of the the simple While Language (WL) along with some data-flow analyses from the course "Static and Dynamic Program Analysis" in the winter term 2023/24 at TU Darmstadt.
+This is an implementation of the simple While Language (WL) along with some data-flow analyses from the course "Static and Dynamic Program Analysis" in the winter term 2023/24 at TU Darmstadt.
 
 ## While Language (WL)
 WL is a simple imperative language that supports computation on integer values, where data is stored in variables, and state is changed by assignments.
