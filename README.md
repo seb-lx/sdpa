@@ -33,6 +33,7 @@ Most of the functions are implemented according to and in the mathematical style
 
 
 ##### TODO
+- AE-analysis, RD-analysis, VB-analysis
 - maybe try out monotone frameworks (formal frameworks for defining data-flow analyses)
 <!---
 - MonotoneFramework (look at SDPA module 4 slide 45)
