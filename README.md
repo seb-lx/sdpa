@@ -32,11 +32,8 @@ Also, using smart pointers in the AST does not help making it less verbose.\
 Most of the functions are implemented according to and in the mathematical style of the lecture, therefore, some operations might be redundant or and could be done more efficiently. However, the idea was just to implement it as in the lecture.
 
 
+##### TODO
+- maybe try out monotone frameworks (formal frameworks for defining data-flow analyses)
 <!---
-## TODO
-- tests for LV analysis
-- multithreaded version F_LV
-- add constraints for each DFA, i.e. LV analysis needs isolated exits etc. Implement that if the input does not fullfull requirement, that an empty skip statement is added.
-
-- add a base class MonotoneFramework (formal frameworks for defining data-flow analyses) that has the abstract member variables and functions, then define the DFAs as subclasses and implement the abstract operations as concrete implementations. (look at SDPA module 4 slide 45)
+- MonotoneFramework (look at SDPA module 4 slide 45)
 -->
