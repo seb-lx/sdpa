@@ -40,12 +40,18 @@ public:
      * Initialize the members using the utility functions.
      * LV-analysis needs the program points, the control flow, and the final program points.
      */
-    explicit LiveVariableAnalysis(const std::shared_ptr<Stmt> &stmt):
-            stmt(stmt), pps(program_points(stmt)), cf(control_flow(stmt)), final_pps(final_program_points(stmt))
+    explicit LiveVariableAnalysis(const std::shared_ptr<Stmt> &stmt): stmt(stmt)
     {
-        this->n = pps.size();
+        // Check if program is well-formed
+        if (!is_program_well_formed(stmt)) throw std::runtime_error("Program is not well-formed!");
 
-        this->check_analysis_constraints();
+        // Calculate program points and their size
+        pps = program_points(stmt); n = pps.size();
+
+        this->check_and_enforce_analysis_constraints();
+
+        // Init control-flow, final program points, recalculate set of pps and its size
+        this->init();
     }
 
     /*
@@ -81,11 +87,21 @@ public:
      */
     [[nodiscard]] std::set<Var> kill_LV(const std::shared_ptr<Block> &block) const;
 
+    /*
+     * Prints the result to cout.
+     */
+    static void print_result(const std::vector<std::set<Var>> &res);
+
 private:
     /*
      * This function checks whether the constraints for the LV-analysis are met,
      * i.e. if the given statement/program has isolated exits.
      * If not, a simple skip statement is added at the end to ensure it works correctly.
      */
-    void check_analysis_constraints();
+    void check_and_enforce_analysis_constraints();
+
+    /*
+     * Calculates and initializes all information that is needed for the LV-analysis.
+     */
+    void init();
 };

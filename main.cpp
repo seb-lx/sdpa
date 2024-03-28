@@ -4,6 +4,7 @@
 #include "parser.hpp"
 #include "utils.hpp"
 #include "test/test_analysis_utils.hpp"
+#include "dfa/lv.hpp"
 
 
 std::string read_program(char* argv[], const std::string &filename)
@@ -44,7 +45,7 @@ void test()
 void run(char* argv[])
 {
     // Read program from file
-    std::string program = read_program(argv, "test.wlang");
+    std::string program = read_program(argv, "./test_programs/ex_1_4_b_program.wlang");
 
     // Lexer to create tokens
     std::vector<Token> tokens = Lexer::tokenize(program);
@@ -52,22 +53,22 @@ void run(char* argv[])
     // Parser to create AST
     Parser parser = Parser(tokens);
     std::shared_ptr<Stmt> stmt = parser.parse();
-    stmt->print_node(0);
+    //stmt->print_node(0);
 
-    /*
-    # LV-analysis
-    lv = LiveVariableAnalysis(stmt);
-    lv_res = lv.compute();
-    tmp = None
-    */
+
+    // LV-analysis
+    auto lv = LiveVariableAnalysis(stmt);
+    std::vector<std::set<Var>> result = lv.compute();
+    lv.print_result(result);
+
 }
 
 int main(int argc, char* argv[])
 {
     if (argc < 1) { std::cerr << "No command-line arguments provided." << std::endl; return 1; }
 
-    test();
-    //run(argv);
+    //test();
+    run(argv);
 
     return 0;
 }

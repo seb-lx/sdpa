@@ -131,6 +131,13 @@ public:
         std::cout << std::string(indent, ' ') << "Var(" << var << ")" << std::endl;
     }
 
+    friend std::ostream& operator<<(std::ostream &os, const Var &v) {
+        os << "Var(" << v.var << ")";
+        return os;
+    }
+
+    [[nodiscard]] std::string get_var() const { return var; }
+
 private:
     [[nodiscard]] bool is_a_exp_equal(const AExp &other) const override
     {
@@ -148,6 +155,11 @@ public:
 
     void print_node(int indent) const override {
         std::cout << std::string(indent, ' ') << "Num(" << num << ")" << std::endl;
+    }
+
+    friend std::ostream& operator<<(std::ostream &os, const Num &n) {
+        os << "Num(" << n.num << ")";
+        return os;
     }
 
 private:
