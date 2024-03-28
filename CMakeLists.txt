@@ -16,11 +16,13 @@ add_executable(
         include/analysis_utils.hpp
         include/set_utils.hpp
         include/dfa/lv.hpp
+        include/dfa/ae.hpp
 
         src/parser.cpp
         src/lexer.cpp
         src/analysis_utils.cpp
         src/dfa/lv.cpp
+        src/dfa/ae.cpp
 
         test/test_analysis_utils.hpp
         test/test_analysis_utils.cpp

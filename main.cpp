@@ -58,9 +58,17 @@ void run(char* argv[])
 
     // LV-analysis
     auto lv = LiveVariableAnalysis(stmt);
-    std::vector<std::set<Var>> result = lv.compute();
-    lv.print_result(result);
+    std::vector<std::set<Var>> lv_result = lv.compute();
+    LiveVariableAnalysis::print_result(lv_result);
 
+    // AE-analysis
+    //auto ae = AvailableExpressionAnalysis(stmt);
+    //std::vector<std::set<AExp>> ae_result = ae.compute();
+    //AvailableExpressionAnalysis::print_result(ae_result);
+
+    // VB-analysis
+
+    // RD-analysis
 }
 
 int main(int argc, char* argv[])
