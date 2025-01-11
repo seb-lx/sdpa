@@ -3,12 +3,15 @@
 #include <fstream>
 #include <sstream>
 #include <filesystem>
+#include <memory>
 
 class WLangReader {
     std::ifstream file;
 
 public:
     explicit WLangReader(char* argv[], const std::string& filename) {
+        if (!filename.ends_with(".wlang")) throw std::runtime_error("Wrong file type!");
+
         std::filesystem::path exe_path = canonical(std::filesystem::path(argv[0]));
         std::filesystem::path file_path = exe_path.parent_path().parent_path() / filename;
 
