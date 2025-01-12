@@ -25,12 +25,17 @@ class Parser {
 public:
     explicit Parser(std::vector<Token>);
 
+    Parser(const Parser&) = delete;
+	Parser(Parser&&) = delete;
+	auto operator=(const Parser&) -> Parser& = delete;
+	auto operator=(Parser&&) -> Parser& = delete; 
+
     [[nodiscard]] std::unique_ptr<Stmt> parse();
 
 private:
-    std::vector<Token> _tokens;
-    Token _current_token;
-    unsigned int _position;
+    std::vector<Token> tokens_;
+    Token current_token_;
+    unsigned int position_;
 
     Token match(TokenKind token_kind);
     void consume();

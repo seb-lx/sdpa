@@ -2,29 +2,29 @@
 
 
 Lexer::Lexer(std::string program_text) :
-    _program_text(std::move(program_text)), _position(0) {}
+    program_text_(std::move(program_text)), position_(0) {}
 
 void Lexer::advance() {
-    ++_position;
+    ++position_;
 }
 
 void Lexer::skip_whitespace() {
-    if (_position >= _program_text.size()) return;
+    if (position_ >= program_text_.size()) return;
 
-    while (std::isspace(_program_text[_position])) {
+    while (std::isspace(program_text_[position_])) {
         advance();
     }
 }
 
 bool Lexer::has_next() {
-    return _position < _program_text.size();
+    return position_ < program_text_.size();
 }
 
 Token Lexer::next_token() {
     skip_whitespace();
 
     if (has_next()) {
-        const char c = _program_text[_position];
+        const char c = program_text_[position_];
 
         if (std::isdigit(c)) {
             return process_number();
@@ -85,8 +85,8 @@ Token Lexer::next_token() {
 Token Lexer::process_number() {
     std::string number;
 
-    while (has_next() && std::isdigit(_program_text[_position])) {
-        number += _program_text[_position];
+    while (has_next() && std::isdigit(program_text_[position_])) {
+        number += program_text_[position_];
         advance();
     }
 
@@ -96,8 +96,8 @@ Token Lexer::process_number() {
 Token Lexer::process_keyword_or_variable() {
     std::string s;
 
-    while (has_next() && std::isalnum(_program_text[_position])) {
-        s += _program_text[_position];
+    while (has_next() && std::isalnum(program_text_[position_])) {
+        s += program_text_[position_];
         advance();
     }
 
@@ -114,7 +114,7 @@ Token Lexer::process_keyword_or_variable() {
 Token Lexer::process_assign() {
     advance();
 
-    if (has_next() && _program_text[_position] == '=') {
+    if (has_next() && program_text_[position_] == '=') {
         advance();
         return {TokenKind::AssignOperand, ":="};
     }
@@ -125,7 +125,7 @@ Token Lexer::process_assign() {
 Token Lexer::process_relational_l() {
     advance();
 
-    if (has_next() && _program_text[_position] == '=') {
+    if (has_next() && program_text_[position_] == '=') {
         advance();
         return { TokenKind::RelationalOperand, "<=" };
     }
@@ -136,7 +136,7 @@ Token Lexer::process_relational_l() {
 Token Lexer::process_relational_g() {
     advance();
 
-    if (has_next() && _program_text[_position] == '=') {
+    if (has_next() && program_text_[position_] == '=') {
         advance();
         return { TokenKind::RelationalOperand, ">=" };
     }

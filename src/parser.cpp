@@ -2,13 +2,13 @@
 
 
 Parser::Parser(std::vector<Token> tokens) :
-    _tokens(std::move(tokens)),
-    _current_token(std::make_pair(TokenKind::Invalid, "")),
-    _position(0) {}
+    tokens_(std::move(tokens)),
+    current_token_(std::make_pair(TokenKind::Invalid, "")),
+    position_(0) {}
 
 
 Token Parser::match(TokenKind token_kind) {
-    const auto token = _current_token;
+    const auto token = current_token_;
 
     if (token.first == token_kind) {
         consume();
@@ -19,14 +19,14 @@ Token Parser::match(TokenKind token_kind) {
 }
 
 void Parser::consume() {
-    ++_position;
-    _current_token = (_position < _tokens.size()) ? _tokens[_position] : std::make_pair(TokenKind::EndOfFile, "");
+    ++position_;
+    current_token_ = (position_ < tokens_.size()) ? tokens_[position_] : std::make_pair(TokenKind::EndOfFile, "");
 }
 
 std::unique_ptr<Stmt> Parser::parse() {
-    if (_position >= _tokens.size()) throw SyntaxError("Cannot parse empty program!");
+    if (position_ >= tokens_.size()) throw SyntaxError("Cannot parse empty program!");
 
-    _current_token = _tokens[_position];
+    current_token_ = tokens_[position_];
     return parse_statement();
 }
 
@@ -38,7 +38,7 @@ unsigned int Parser::parse_program_point() {
 std::unique_ptr<Stmt> Parser::parse_statement() {
     std::unique_ptr<Stmt> left_statement = nullptr;
 
-    const auto& kind = _current_token.first;
+    const auto& kind = current_token_.first;
     if (kind == TokenKind::OpenBracket) {
         left_statement = parse_skip_or_assign_statement();
     }
@@ -70,7 +70,7 @@ std::unique_ptr<Stmt> Parser::parse_statement() {
 std::unique_ptr<Stmt> Parser::parse_skip_or_assign_statement() {
     match(TokenKind::OpenBracket);
 
-    const auto& kind = _current_token.first;
+    const auto& kind = current_token_.first;
     if (kind == TokenKind::SkipKeyword) {
         return parse_skip_statement();
     }
@@ -159,7 +159,7 @@ std::unique_ptr<Stmt> Parser::parse_while_statement() {
 }
 
 std::unique_ptr<AExp> Parser::parse_arithmetic_expression() {
-    const auto& kind = _current_token.first;
+    const auto& kind = current_token_.first;
 
     if (kind == TokenKind::Variable) {
         return parse_variable();
@@ -206,7 +206,7 @@ std::unique_ptr<AExp> Parser::parse_arithmetic_operation() {
 }
 
 std::unique_ptr<BExp> Parser::parse_boolean_expression() {
-    const auto& kind = _current_token.first;
+    const auto& kind = current_token_.first;
 
     if (kind == TokenKind::TrueKeyword) {
         return parse_true();
@@ -291,7 +291,7 @@ std::unique_ptr<BExp> Parser::parse_boolean_operation() {
 
 bool Parser::is_next_binary_op_opr() noexcept {
     const unsigned int idx = get_idx_of_next_op();
-    const auto& kindAtIdx = _tokens[idx].first;
+    const auto& kindAtIdx = tokens_[idx].first;
     return kindAtIdx == TokenKind::RelationalOperand;
 }
 
@@ -305,13 +305,13 @@ unsigned int Parser::get_idx_of_next_op() noexcept {
     //    (a op1 (a op2 a)) gives index of op1
 
     std::vector<int> stack;
-    unsigned int idx = _position;
+    unsigned int idx = position_;
 
     while (true) {
-        if (_tokens[idx].first == TokenKind::OpenParen) {
+        if (tokens_[idx].first == TokenKind::OpenParen) {
             stack.emplace_back(idx);
         }
-        else if (_tokens[idx].first == TokenKind::CloseParen) {
+        else if (tokens_[idx].first == TokenKind::CloseParen) {
             stack.pop_back();
         }
 
@@ -319,7 +319,7 @@ unsigned int Parser::get_idx_of_next_op() noexcept {
         //  if it is the next operator is from the outer boolean expression
         // This works since the first paren of the outer boolean expression is not on the stack
         //  if this would be the case then we had to check if stack.size() == 1
-        const auto& kindAtIdx = _tokens[idx].first;
+        const auto& kindAtIdx = tokens_[idx].first;
         bool found_opr_or_opb = kindAtIdx == TokenKind::BooleanOperand or kindAtIdx == TokenKind::RelationalOperand;
         if (stack.empty() && found_opr_or_opb)
             break;

@@ -7,7 +7,7 @@
 
 class WLangReader {
 private:
-    std::ifstream file;
+    std::ifstream file_;
 
 public:
     explicit WLangReader(char* argv[], const std::string& filename) {
@@ -16,12 +16,12 @@ public:
         std::filesystem::path exe_path = canonical(std::filesystem::path(argv[0]));
         std::filesystem::path file_path = exe_path.parent_path().parent_path() / filename;
 
-        file.open(file_path);
+        file_.open(file_path);
     }
 
     ~WLangReader() {
-        if(file.is_open()) {
-            file.close();
+        if(file_.is_open()) {
+            file_.close();
         }
     }
 
@@ -37,10 +37,10 @@ public:
 
 private:
     [[nodiscard]] std::string read_file() const {
-        if (!file.is_open()) throw std::runtime_error("Error while opening file!");
+        if (!file_.is_open()) throw std::runtime_error("Error while opening file!");
 
         std::stringstream buffer;
-        buffer << file.rdbuf();
+        buffer << file_.rdbuf();
         return buffer.str();
     }
 };

@@ -11,12 +11,18 @@
 class Lexer {
 public:
     explicit Lexer(std::string);
+
+	Lexer(const Lexer&) = delete;
+	Lexer(Lexer&&) = delete;
+	auto operator=(const Lexer&) -> Lexer& = delete;
+	auto operator=(Lexer&&) -> Lexer& = delete; 
+
     [[nodiscard]] std::vector<Token> tokenize();
     void print_tokens(const std::vector<Token>&) const;
 
 private:
-    std::string _program_text;
-    unsigned int _position;
+    std::string program_text_;
+    unsigned int position_;
 
     void advance();
     void skip_whitespace();

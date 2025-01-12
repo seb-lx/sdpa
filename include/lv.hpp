@@ -16,11 +16,11 @@
 //  */ 
 // class LiveVariableAnalysis {
 // private:
-//     std::unique_ptr<Stmt> _stmt;        // Statement
-//     std::set<PP> _pps;                  // Program points
-//     std::set<std::pair<PP, PP>> _cf;    // Control flow
-//     std::set<PP> _final_pps;            // Final program points
-//     unsigned int _n;                    // Number of program points
+//     std::unique_ptr<Stmt> stmt_;        // Statement
+//     std::set<PP> pps_;                  // Program points
+//     std::set<std::pair<PP, PP>> cf_;    // Control flow
+//     std::set<PP> final_pps_;            // Final program points
+//     unsigned int n_;                    // Number of program points
 
 // public:
 //     /*
