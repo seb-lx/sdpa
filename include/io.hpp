@@ -6,6 +6,7 @@
 #include <memory>
 
 class WLangReader {
+private:
     std::ifstream file;
 
 public:
@@ -17,10 +18,14 @@ public:
 
         file.open(file_path);
     }
-    ~WLangReader() { if(file.is_open()) file.close(); }
 
-    [[nodiscard]] std::string read_program() const
-    {
+    ~WLangReader() {
+        if(file.is_open()) {
+            file.close();
+        }
+    }
+
+    [[nodiscard]] std::string read_program() const {
         std::string program;
 
         try {

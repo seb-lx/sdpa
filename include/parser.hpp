@@ -3,9 +3,10 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include <stdexcept>
 
-#include "lexer.hpp"
 #include "ast.hpp"
+#include "token.hpp"
 
 
 class SyntaxError: public std::exception {

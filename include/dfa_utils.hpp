@@ -15,8 +15,7 @@ template<class... Ts> overload(Ts...) -> overload<Ts...>;
 namespace dfa_utilities
 {
 
-std::set<Var> free_variables_aexp(const std::unique_ptr<AExp>& aexp)
-{
+std::set<Var> free_variables_aexp(const std::unique_ptr<AExp>& aexp) {
     std::set<Var> free_vars;
 
     auto visitor = overload {
@@ -32,13 +31,14 @@ std::set<Var> free_variables_aexp(const std::unique_ptr<AExp>& aexp)
         }
     };
 
-    if (aexp) std::visit(visitor, *aexp);
+    if (aexp) {
+        std::visit(visitor, *aexp);
+    }
 
     return free_vars; // should move using RVO?
 }
 
-std::set<Var> free_variables_bexp(const std::unique_ptr<BExp>& bexp)
-{
+std::set<Var> free_variables_bexp(const std::unique_ptr<BExp>& bexp) {
     std::set<Var> free_vars;
 
     auto visitor = overload {
@@ -62,13 +62,14 @@ std::set<Var> free_variables_bexp(const std::unique_ptr<BExp>& bexp)
         }
     };
 
-    if (bexp) std::visit(visitor, *bexp);
+    if (bexp) {
+        std::visit(visitor, *bexp);
+    }
 
     return free_vars; // should move using RVO?
 }
 
-std::set<Var> free_variables_stmt(const std::unique_ptr<Stmt>& stmt)
-{
+std::set<Var> free_variables_stmt(const std::unique_ptr<Stmt>& stmt) {
     std::set<Var> free_vars;
 
     auto visitor = overload {
@@ -100,9 +101,16 @@ std::set<Var> free_variables_stmt(const std::unique_ptr<Stmt>& stmt)
         }
     };
 
-    if (stmt) std::visit(visitor, *stmt);
+    if (stmt) {
+        std::visit(visitor, *stmt);
+    }
 
     return free_vars; // should move using RVO?
+}
+
+
+std::set<PP> program_points(const std::unique_ptr<Stmt>& stmt) {
+    return {}; // TODO
 }
 
 }

@@ -5,10 +5,10 @@
 #include "parser.hpp"
 #include "io.hpp"
 #include "dfa_utils.hpp"
+#include "token.hpp"
 
 
-void run(char *argv[])
-{
+void run(char *argv[]) {
     const WLangReader reader(argv, "./resources/factorial.wlang");
     const std::string program_text = reader.read_program();
 
@@ -31,8 +31,7 @@ void run(char *argv[])
     //auto lv = LiveVariableAnalysis(stmt);
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     run(argv);
 
     return 0;

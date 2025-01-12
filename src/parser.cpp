@@ -1,15 +1,13 @@
 #include "parser.hpp"
 
-#include <stdexcept>
-#include <utility>
 
-Parser::Parser(std::vector<Token> tokens) : _tokens(std::move(tokens)),
-                                            _current_token(std::make_pair(TokenKind::Invalid, "")),
-                                            _position(0) {}
+Parser::Parser(std::vector<Token> tokens) :
+    _tokens(std::move(tokens)),
+    _current_token(std::make_pair(TokenKind::Invalid, "")),
+    _position(0) {}
 
 
-Token Parser::match(TokenKind token_kind)
-{
+Token Parser::match(TokenKind token_kind) {
     const auto token = _current_token;
 
     if (token.first == token_kind) {
@@ -20,28 +18,24 @@ Token Parser::match(TokenKind token_kind)
     throw SyntaxError("Unexpected token (" + KIND_TO_STRING_MAP.at(token.first) + ")!");
 }
 
-void Parser::consume()
-{
+void Parser::consume() {
     ++_position;
     _current_token = (_position < _tokens.size()) ? _tokens[_position] : std::make_pair(TokenKind::EndOfFile, "");
 }
 
-std::unique_ptr<Stmt> Parser::parse()
-{
+std::unique_ptr<Stmt> Parser::parse() {
     if (_position >= _tokens.size()) throw SyntaxError("Cannot parse empty program!");
 
     _current_token = _tokens[_position];
     return parse_statement();
 }
 
-unsigned int Parser::parse_program_point()
-{
+unsigned int Parser::parse_program_point() {
     const auto number_lexeme = match(TokenKind::Number).second;
     return std::stoul(number_lexeme);
 }
 
-std::unique_ptr<Stmt> Parser::parse_statement()
-{
+std::unique_ptr<Stmt> Parser::parse_statement() {
     std::unique_ptr<Stmt> left_statement = nullptr;
 
     const auto& kind = _current_token.first;
@@ -58,7 +52,7 @@ std::unique_ptr<Stmt> Parser::parse_statement()
     }
 
     // Sequential composition
-    if (kind == TokenKind::Semicolon) { //  todo?:  && _position < _tokens.size()
+    if (kind == TokenKind::Semicolon) {
         match(TokenKind::Semicolon);
         auto right_statement = parse_statement();
 
@@ -73,8 +67,7 @@ std::unique_ptr<Stmt> Parser::parse_statement()
     return left_statement;
 }
 
-std::unique_ptr<Stmt> Parser::parse_skip_or_assign_statement()
-{
+std::unique_ptr<Stmt> Parser::parse_skip_or_assign_statement() {
     match(TokenKind::OpenBracket);
 
     const auto& kind = _current_token.first;
@@ -88,8 +81,7 @@ std::unique_ptr<Stmt> Parser::parse_skip_or_assign_statement()
     throw SyntaxError("Expected skip or assign statement!");
 }
 
-std::unique_ptr<Stmt> Parser::parse_skip_statement()
-{
+std::unique_ptr<Stmt> Parser::parse_skip_statement() {
     match(TokenKind::SkipKeyword);
     match(TokenKind::CloseBracket);
     match(TokenKind::Superscript);
@@ -100,8 +92,7 @@ std::unique_ptr<Stmt> Parser::parse_skip_statement()
     );
 }
 
-std::unique_ptr<Stmt> Parser::parse_assign_statement()
-{
+std::unique_ptr<Stmt> Parser::parse_assign_statement() {
     auto var = std::make_unique<Var>(Parser::match(TokenKind::Variable).second);
     match(TokenKind::AssignOperand);
     auto aexp = parse_arithmetic_expression();
@@ -118,8 +109,7 @@ std::unique_ptr<Stmt> Parser::parse_assign_statement()
     );
 }
 
-std::unique_ptr<Stmt> Parser::parse_if_statement()
-{
+std::unique_ptr<Stmt> Parser::parse_if_statement() {
     match(TokenKind::IfKeyword);
 
     match(TokenKind::OpenBracket);
@@ -146,8 +136,7 @@ std::unique_ptr<Stmt> Parser::parse_if_statement()
     );
 }
 
-std::unique_ptr<Stmt> Parser::parse_while_statement()
-{
+std::unique_ptr<Stmt> Parser::parse_while_statement() {
     match(TokenKind::WhileKeyword);
 
     match(TokenKind::OpenBracket);
@@ -169,8 +158,7 @@ std::unique_ptr<Stmt> Parser::parse_while_statement()
     );
 }
 
-std::unique_ptr<AExp> Parser::parse_arithmetic_expression()
-{
+std::unique_ptr<AExp> Parser::parse_arithmetic_expression() {
     const auto& kind = _current_token.first;
 
     if (kind == TokenKind::Variable) {
@@ -187,15 +175,13 @@ std::unique_ptr<AExp> Parser::parse_arithmetic_expression()
     }
 }
 
-std::unique_ptr<AExp> Parser::parse_variable()
-{
+std::unique_ptr<AExp> Parser::parse_variable() {
     return std::make_unique<AExp>(
         Var { match(TokenKind::Variable).second }
     );
 }
 
-std::unique_ptr<AExp> Parser::parse_number()
-{
+std::unique_ptr<AExp> Parser::parse_number() {
     const unsigned int number = std::stoul(match(TokenKind::Number).second);
 
     return std::make_unique<AExp>(
@@ -203,8 +189,7 @@ std::unique_ptr<AExp> Parser::parse_number()
     );
 }
 
-std::unique_ptr<AExp> Parser::parse_arithmetic_operation()
-{
+std::unique_ptr<AExp> Parser::parse_arithmetic_operation() {
     match(TokenKind::OpenParen);
     auto lhs = parse_arithmetic_expression();
     const auto op = match(TokenKind::ArithmeticOperand).second;
@@ -220,8 +205,7 @@ std::unique_ptr<AExp> Parser::parse_arithmetic_operation()
     );
 }
 
-std::unique_ptr<BExp> Parser::parse_boolean_expression()
-{
+std::unique_ptr<BExp> Parser::parse_boolean_expression() {
     const auto& kind = _current_token.first;
 
     if (kind == TokenKind::TrueKeyword) {
@@ -251,22 +235,19 @@ std::unique_ptr<BExp> Parser::parse_boolean_expression()
     }
 }
 
-std::unique_ptr<BExp> Parser::parse_true()
-{
+std::unique_ptr<BExp> Parser::parse_true() {
     return std::make_unique<BExp>(
         True {}
     );
 }
 
-std::unique_ptr<BExp> Parser::parse_false()
-{
+std::unique_ptr<BExp> Parser::parse_false() {
     return std::make_unique<BExp>(
         False {}
     );   
 }
 
-std::unique_ptr<BExp> Parser::parse_not()
-{
+std::unique_ptr<BExp> Parser::parse_not() {
     match(TokenKind::NotKeyword);
     auto b = parse_boolean_expression();
     match(TokenKind::CloseParen);
@@ -276,8 +257,7 @@ std::unique_ptr<BExp> Parser::parse_not()
     );    
 }
 
-std::unique_ptr<BExp> Parser::parse_relational_operation()
-{
+std::unique_ptr<BExp> Parser::parse_relational_operation() {
     auto lhs = parse_arithmetic_expression();
     const auto op = match(TokenKind::RelationalOperand).second;
     auto rhs = parse_arithmetic_expression();
@@ -293,8 +273,7 @@ std::unique_ptr<BExp> Parser::parse_relational_operation()
     );
 }
 
-std::unique_ptr<BExp> Parser::parse_boolean_operation()
-{
+std::unique_ptr<BExp> Parser::parse_boolean_operation() {
     auto lhs = parse_boolean_expression();
     const auto op = match(TokenKind::BooleanOperand).second;
     auto rhs = parse_boolean_expression();
@@ -310,15 +289,13 @@ std::unique_ptr<BExp> Parser::parse_boolean_operation()
     );
 }
 
-bool Parser::is_next_binary_op_opr() noexcept
-{
+bool Parser::is_next_binary_op_opr() noexcept {
     const unsigned int idx = get_idx_of_next_op();
     const auto& kindAtIdx = _tokens[idx].first;
     return kindAtIdx == TokenKind::RelationalOperand;
 }
 
-unsigned int Parser::get_idx_of_next_op() noexcept
-{
+unsigned int Parser::get_idx_of_next_op() noexcept {
     // Stack-based search of index of the next operator.
     //      Note that first open paren already matched.
     //
