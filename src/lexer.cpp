@@ -2,14 +2,16 @@
 
 
 Lexer::Lexer(std::string program_text) :
-    program_text_(std::move(program_text)), position_(0) {}
+    program_text_{std::move(program_text)}, position_{0} {}
 
 void Lexer::advance() {
     ++position_;
 }
 
 void Lexer::skip_whitespace() {
-    if (position_ >= program_text_.size()) return;
+    if (position_ >= program_text_.size()) {
+        return;
+    }
 
     while (std::isspace(program_text_[position_])) {
         advance();
@@ -43,58 +45,58 @@ Token Lexer::next_token() {
         }
         else if (c == '+') {
             advance();
-            return { TokenKind::ArithmeticOperand, std::string(1, c) };
+            return {TokenKind::ArithmeticOperand, std::string(1, c)};
         }
         else if (c == '-') {
             advance();
-            return { TokenKind::ArithmeticOperand, std::string(1, c) };
+            return {TokenKind::ArithmeticOperand, std::string(1, c)};
         }
         else if (c == '*') {
             advance();
-            return { TokenKind::ArithmeticOperand, std::string(1, c) };
+            return {TokenKind::ArithmeticOperand, std::string(1, c)};
         }
         else if (c == '^') {
             advance();
-            return { TokenKind::Superscript, std::string(1, c) };
+            return {TokenKind::Superscript, std::string(1, c)};
         }
         else if (c == ';') {
             advance();
-            return { TokenKind::Semicolon, std::string(1, c) };
+            return {TokenKind::Semicolon, std::string(1, c)};
         }
         else if (c == '(') {
             advance();
-            return { TokenKind::OpenParen, std::string(1, c) };
+            return {TokenKind::OpenParen, std::string(1, c)};
         }
         else if (c == ')') {
             advance();
-            return { TokenKind::CloseParen, std::string(1, c) };
+            return {TokenKind::CloseParen, std::string(1, c)};
         }
         else if (c == '[') {
             advance();
-            return { TokenKind::OpenBracket, std::string(1, c) };
+            return {TokenKind::OpenBracket, std::string(1, c)};
         }
         else if (c == ']') {
             advance();
-            return { TokenKind::CloseBracket, std::string(1, c) };
+            return {TokenKind::CloseBracket, std::string(1, c)};
         }
     }
 
-    return { TokenKind::EndOfFile, "" };
+    return {TokenKind::EndOfFile, ""};
 }
 
 Token Lexer::process_number() {
-    std::string number;
+    std::string number{};
 
     while (has_next() && std::isdigit(program_text_[position_])) {
         number += program_text_[position_];
         advance();
     }
 
-    return { TokenKind::Number, number };
+    return {TokenKind::Number, number};
 }
 
 Token Lexer::process_keyword_or_variable() {
-    std::string s;
+    std::string s{};
 
     while (has_next() && std::isalnum(program_text_[position_])) {
         s += program_text_[position_];
@@ -104,11 +106,11 @@ Token Lexer::process_keyword_or_variable() {
     // Retrieve keyword
     auto it = KEYWORD_STRING_TO_KIND_MAP.find(s);
     if (it != KEYWORD_STRING_TO_KIND_MAP.end()) {
-        return { it->second, s };
+        return {it->second, s};
     }
 
     // No keyword found, therefore variable
-    return { TokenKind::Variable, s };
+    return {TokenKind::Variable, s};
 }
 
 Token Lexer::process_assign() {
@@ -127,10 +129,10 @@ Token Lexer::process_relational_l() {
 
     if (has_next() && program_text_[position_] == '=') {
         advance();
-        return { TokenKind::RelationalOperand, "<=" };
+        return {TokenKind::RelationalOperand, "<="};
     }
 
-    return { TokenKind::RelationalOperand, "<" };
+    return {TokenKind::RelationalOperand, "<"};
 }
 
 Token Lexer::process_relational_g() {
@@ -138,14 +140,14 @@ Token Lexer::process_relational_g() {
 
     if (has_next() && program_text_[position_] == '=') {
         advance();
-        return { TokenKind::RelationalOperand, ">=" };
+        return {TokenKind::RelationalOperand, ">="};
     }
 
-    return { TokenKind::RelationalOperand, ">" };
+    return {TokenKind::RelationalOperand, ">"};
 }
 
 std::vector<Token> Lexer::tokenize() {
-    std::vector<Token> tokens;
+    std::vector<Token> tokens{};
 
     Token current_token = next_token();
     while (current_token.first != TokenKind::EndOfFile) {

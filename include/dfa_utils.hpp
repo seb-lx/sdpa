@@ -11,12 +11,13 @@ template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
 template<class... Ts> overload(Ts...) -> overload<Ts...>;
 
 
+//TODO: cpp datei
 
-namespace dfa_utilities
+namespace dfa_utils
 {
 
 std::set<Var> free_variables_aexp(const std::unique_ptr<AExp>& aexp) {
-    std::set<Var> free_vars;
+    std::set<Var> free_vars{};
 
     auto visitor = overload {
       [&free_vars](const Var& var) { 
@@ -24,8 +25,8 @@ std::set<Var> free_variables_aexp(const std::unique_ptr<AExp>& aexp) {
         },
       [&free_vars](const Num& num) {},
       [&free_vars](const ArithmeticOp& opa) {
-            auto lhs_set = free_variables_aexp(opa._lhs);
-            auto rhs_set = free_variables_aexp(opa._rhs);
+            auto lhs_set = free_variables_aexp(opa.lhs_);
+            auto rhs_set = free_variables_aexp(opa.rhs_);
             free_vars.insert(lhs_set.begin(), lhs_set.end());
             free_vars.insert(rhs_set.begin(), rhs_set.end());
         }
@@ -45,18 +46,18 @@ std::set<Var> free_variables_bexp(const std::unique_ptr<BExp>& bexp) {
         [&free_vars](const True& t) {},
         [&free_vars](const False& f) {},
         [&free_vars](const Not& n) {
-            auto not_bexp_set = free_variables_bexp(n._b);
+            auto not_bexp_set = free_variables_bexp(n.b_);
             free_vars.insert(not_bexp_set.begin(), not_bexp_set.end());
         },
         [&free_vars](const BooleanOp& opb) {
-            auto lhs_set = free_variables_bexp(opb._lhs);
-            auto rhs_set = free_variables_bexp(opb._rhs);
+            auto lhs_set = free_variables_bexp(opb.lhs_);
+            auto rhs_set = free_variables_bexp(opb.rhs_);
             free_vars.insert(lhs_set.begin(), lhs_set.end());
             free_vars.insert(rhs_set.begin(), rhs_set.end());
         },
         [&free_vars](const RelationalOp& opr) {
-            auto lhs_set = free_variables_aexp(opr._lhs);
-            auto rhs_set = free_variables_aexp(opr._rhs);
+            auto lhs_set = free_variables_aexp(opr.lhs_);
+            auto rhs_set = free_variables_aexp(opr.rhs_);
             free_vars.insert(lhs_set.begin(), lhs_set.end());
             free_vars.insert(rhs_set.begin(), rhs_set.end());
         }
@@ -66,36 +67,36 @@ std::set<Var> free_variables_bexp(const std::unique_ptr<BExp>& bexp) {
         std::visit(visitor, *bexp);
     }
 
-    return free_vars; // should move using RVO?
+    return free_vars;
 }
 
 std::set<Var> free_variables_stmt(const std::unique_ptr<Stmt>& stmt) {
-    std::set<Var> free_vars;
+    std::set<Var> free_vars{};
 
     auto visitor = overload {
         [&free_vars](const Skip& s) {},
         [&free_vars](const Assign& a) {
-            auto aexp_set = free_variables_aexp(a._aexp);
-            free_vars.insert(*(a._var));
+            auto aexp_set = free_variables_aexp(a.aexp_);
+            free_vars.insert(*(a.var_));
             free_vars.insert(aexp_set.begin(), aexp_set.end());
         },
         [&free_vars](const If& i) {
-            auto cond_set = free_variables_bexp(i._cond);
-            auto then_set = free_variables_stmt(i._then);
-            auto else_set = free_variables_stmt(i._else);
+            auto cond_set = free_variables_bexp(i.cond_->bexp_);
+            auto then_set = free_variables_stmt(i.then_);
+            auto else_set = free_variables_stmt(i.else_);
             free_vars.insert(cond_set.begin(), cond_set.end());
             free_vars.insert(then_set.begin(), then_set.end());
             free_vars.insert(else_set.begin(), else_set.end());
         },
         [&free_vars](const While& w) {
-            auto cond_set = free_variables_bexp(w._cond);
-            auto body_set = free_variables_stmt(w._body);
+            auto cond_set = free_variables_bexp(w.cond_->bexp_);
+            auto body_set = free_variables_stmt(w.body_);
             free_vars.insert(cond_set.begin(), cond_set.end());
             free_vars.insert(body_set.begin(), body_set.end());
         },
         [&free_vars](const SeqComp& sc) {
-            auto fst_set = free_variables_stmt(sc._fst);
-            auto snd_set = free_variables_stmt(sc._snd);
+            auto fst_set = free_variables_stmt(sc.fst_);
+            auto snd_set = free_variables_stmt(sc.snd_);
             free_vars.insert(fst_set.begin(), fst_set.end());
             free_vars.insert(snd_set.begin(), snd_set.end());
         }
@@ -105,7 +106,7 @@ std::set<Var> free_variables_stmt(const std::unique_ptr<Stmt>& stmt) {
         std::visit(visitor, *stmt);
     }
 
-    return free_vars; // should move using RVO?
+    return free_vars;
 }
 
 

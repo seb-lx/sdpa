@@ -13,7 +13,7 @@ class SyntaxError: public std::exception {
 private:
     std::string msg;
 public:
-    explicit SyntaxError(std::string msg): msg(std::move(msg)) {}
+    explicit SyntaxError(std::string msg): msg{std::move(msg)} {}
 
     [[nodiscard]] const char* what() const noexcept override {
         return msg.c_str();
@@ -40,7 +40,7 @@ private:
     Token match(TokenKind token_kind);
     void consume();
 
-    [[nodiscard]] unsigned int parse_program_point();
+    [[nodiscard]] PP parse_program_point();
 
     [[nodiscard]] std::unique_ptr<Stmt> parse_statement();
     [[nodiscard]] std::unique_ptr<Stmt> parse_skip_or_assign_statement();
@@ -53,6 +53,8 @@ private:
     [[nodiscard]] std::unique_ptr<AExp> parse_variable();
     [[nodiscard]] std::unique_ptr<AExp> parse_number();
     [[nodiscard]] std::unique_ptr<AExp> parse_arithmetic_operation();
+
+    [[nodiscard]] std::unique_ptr<Cond> parse_condition();
 
     [[nodiscard]] std::unique_ptr<BExp> parse_boolean_expression();
     [[nodiscard]] std::unique_ptr<BExp> parse_true();
