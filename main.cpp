@@ -25,9 +25,27 @@ void run(char *argv[]) {
         std::cout << element.name_ << " ";
     }
 
+    const auto bs = dfa_utils::blocks(stmt);
+    /*auto visitor = overload {
+        [&bs](const Skip& s) {
+            std::cout << ""
+        },
+        [&bs](const Assign& a) {
+            bs.insert(a);
+        },
+        [&bs](const Cond& c) {
+
+        }
+    };*/
+
+    for (const auto& element : bs) {
+        //std::visit(visitor, element);
+        std::cout << "element.pp = " << element.pp_ << "\n";
+    }
+
     std::cout << std::endl;
-    ASTPrinter printer{};
-    printer.print_AST(*stmt);
+    //ASTPrinter printer{};
+    //printer.print_AST(*stmt);
     //LiveVariableAnalysis lv{stmt};
 }
 

@@ -52,6 +52,11 @@ using PP = unsigned int;
 // Skip, Assign and Cond (if or while condition)
 struct Block {
     PP pp_; 
+
+    // Needed for std::set<T>
+    bool operator<(const Block& other) const {
+        return pp_ < other.pp_;
+    }
 };
 
 struct Skip: public Block {};

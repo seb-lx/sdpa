@@ -114,4 +114,41 @@ std::set<PP> program_points(const std::unique_ptr<Stmt>& stmt) {
     return {}; // TODO
 }
 
+std::set<Block> blocks(const std::unique_ptr<Stmt>& stmt) {
+    std::set<Block> bs{};
+
+    auto visitor = overload {
+        [&bs](const Skip& s) {
+            bs.insert(s);
+        },
+        [&bs](const Assign& a) {
+            bs.insert(a);
+        },
+        [&bs](const If& i) {
+            bs.insert(*(i.cond_));
+            auto then_set = blocks(i.then_);
+            auto else_set = blocks(i.else_);
+            bs.insert(then_set.begin(), then_set.end());
+            bs.insert(else_set.begin(), else_set.end());
+        },
+        [&bs](const While& w) {
+            bs.insert(*(w.cond_));
+            auto body_set = blocks(w.body_);
+            bs.insert(body_set.begin(), body_set.end());
+        },
+        [&bs](const SeqComp& sc) {
+            auto fst_set = blocks(sc.fst_);
+            auto snd_set = blocks(sc.snd_);
+            bs.insert(fst_set.begin(), fst_set.end());
+            bs.insert(snd_set.begin(), snd_set.end());
+        }
+    };
+
+    if (stmt) {
+        std::visit(visitor, *stmt);
+    }
+
+    return bs;
+}
+
 }
