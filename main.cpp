@@ -20,30 +20,13 @@ void run(char *argv[]) {
     auto stmt = parser.parse();
 
 
-    const auto fv = dfa_utils::free_variables_stmt(stmt);
-    for (const auto& element : fv) {
-        std::cout << element.name_ << " ";
-    }
-
+    const auto fvs = dfa_utils::free_variables_stmt(stmt);
+    const auto pps = dfa_utils::program_points(stmt);
     const auto bs = dfa_utils::blocks(stmt);
-    /*auto visitor = overload {
-        [&bs](const Skip& s) {
-            std::cout << ""
-        },
-        [&bs](const Assign& a) {
-            bs.insert(a);
-        },
-        [&bs](const Cond& c) {
+    dfa_utils::io::print_var_set(fvs);
+    dfa_utils::io::print_pp_set(pps);
+    dfa_utils::io::print_block_set(bs);
 
-        }
-    };*/
-
-    for (const auto& element : bs) {
-        //std::visit(visitor, element);
-        std::cout << "element.pp = " << element.pp_ << "\n";
-    }
-
-    std::cout << std::endl;
     //ASTPrinter printer{};
     //printer.print_AST(*stmt);
     //LiveVariableAnalysis lv{stmt};

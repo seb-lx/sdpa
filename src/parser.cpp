@@ -90,7 +90,7 @@ std::unique_ptr<Stmt> Parser::parse_skip_statement() {
     const auto pp = parse_program_point();
 
     return std::make_unique<Stmt>(
-        Skip{{pp}}
+        Skip{pp}
     );
 }
 
@@ -106,7 +106,7 @@ std::unique_ptr<Stmt> Parser::parse_assign_statement() {
     
     return std::make_unique<Stmt>(
         Assign{
-            {pp},
+            pp,
             std::move(var),
             std::move(aexp),
         }
@@ -122,7 +122,7 @@ std::unique_ptr<Cond> Parser::parse_condition() {
 
     return std::make_unique<Cond>(
         Cond{
-            {pp},
+            pp,
             std::move(bexp)
         }
     );

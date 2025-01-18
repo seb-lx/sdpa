@@ -11,8 +11,6 @@ struct If;
 struct While;
 struct SeqComp;
 
-struct Cond;
-
 struct Var;
 struct Num;
 struct ArithmeticOp;
@@ -22,6 +20,8 @@ struct False;
 struct Not;
 struct BooleanOp;
 struct RelationalOp;
+
+struct Cond;
 
 using Stmt = std::variant<
     Skip,
@@ -53,21 +53,28 @@ using PP = unsigned int;
 struct Block {
     PP pp_; 
 
-    // Needed for std::set<T>
-    bool operator<(const Block& other) const {
-        return pp_ < other.pp_;
-    }
+    Block(PP pp): pp_{pp} {}
+
+    virtual ~Block() = default;
 };
 
-struct Skip: public Block {};
+struct Skip: public Block {
+    Skip(PP pp): Block{pp} {}
+};
 
 struct Assign: public Block {
     std::unique_ptr<Var> var_;
     std::unique_ptr<AExp> aexp_;
+
+    Assign(PP pp, std::unique_ptr<Var> var, std::unique_ptr<AExp> aexp): 
+        Block{pp}, var_{std::move(var)}, aexp_{std::move(aexp)} {}
 };
 
 struct Cond: public Block {
     std::unique_ptr<BExp> bexp_;
+
+    Cond(PP pp, std::unique_ptr<BExp> bexp): 
+        Block{pp}, bexp_{std::move(bexp)} {}
 };
 
 struct If {
@@ -88,11 +95,6 @@ struct SeqComp {
 
 struct Var {
     std::string name_;
-
-    // Needed for std::set<T>
-    bool operator<(const Var& other) const {
-        return name_ < other.name_;
-    }
 };
 
 struct Num {
