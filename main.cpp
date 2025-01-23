@@ -29,6 +29,8 @@ void run(char *argv[]) {
     dfa_utils::io::print_block_set(bs);
     dfa_utils::io::print_block_set({b});
 
+    // todo: test occurences, well formedness, init, final, cf, isolated entries, isolated exits
+
     //ASTPrinter printer{};
     //printer.print_AST(*stmt);
     //LiveVariableAnalysis lv{stmt};
