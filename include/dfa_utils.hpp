@@ -17,6 +17,21 @@ template<class... Ts> overload(Ts...) -> overload<Ts...>;
 namespace dfa_utils
 {
 
+/*
+namespace {
+    const Block* find_block_in_stmt(const std::unique_ptr<Stmt>& stmt, const PP& pp) {
+        if (!stmt) return nullptr;
+
+        std::set<PP> pps = program_points(stmt);
+        if (pps.contains(pp)) {
+            return get_block(stmt, pp);
+        }
+        
+        return nullptr;
+    }
+}*/
+
+
 // Custom comparator for Block pointer
 // so that std::set orders the elements according to the underlying block instead of memory addresses
 struct BlockPtrCmp {
@@ -129,6 +144,8 @@ std::set<const Var*, VarPtrCmp> free_variables_stmt(const std::unique_ptr<Stmt>&
 std::set<PP> program_points(const std::unique_ptr<Stmt>& stmt) {
     std::set<PP> pps{};
 
+    if (!stmt) return pps;
+
     auto visitor = overload {
         [&pps](const Skip& s) {
             pps.insert(s.pp_);
@@ -156,12 +173,76 @@ std::set<PP> program_points(const std::unique_ptr<Stmt>& stmt) {
         }
     };
 
-    if (stmt) {
-        std::visit(visitor, *stmt);
-    }
+    std::visit(visitor, *stmt);
 
     return pps;
 }
+
+ //TODO for LV: final pps, control flow, 
+
+
+/**
+ * Returns the elementary block for the given program point.
+ * If the program point is not found within the stmt, return nullptr
+ */
+const Block* get_block(const std::unique_ptr<Stmt>& stmt, const PP pp) {
+    if (!stmt) return nullptr;
+
+    auto visitor = overload {
+        [&pp](const Skip& s) -> const Block* {
+            return (s.pp_ == pp) ? &s : nullptr;
+        },
+        [&pp](const Assign& a) -> const Block* {
+            return (a.pp_ == pp) ? &a : nullptr;
+        },
+        [&pp](const If& i) -> const Block* {
+            if (i.cond_->pp_ == pp) {
+                const Block* cond_ptr = i.cond_.get();
+                return cond_ptr;
+            }
+
+            std::set<PP> pps_then = program_points(i.then_);
+            if (pps_then.contains(pp)) {
+                return get_block(i.then_, pp);
+            }
+
+            std::set<PP> pps_else = program_points(i.else_);
+            if (pps_else.contains(pp)) {
+                return get_block(i.else_, pp);
+            }
+
+            return nullptr;
+        },
+        [&pp](const While& w) -> const Block* {
+            if (w.cond_->pp_ == pp) {
+                const Block* cond_ptr = w.cond_.get();
+                return cond_ptr;
+            }
+
+            std::set<PP> pps_body = program_points(w.body_);
+            if (pps_body.contains(pp)) {
+                return get_block(w.body_, pp);
+            }
+
+            return nullptr;
+        },
+        [&pp](const SeqComp& sc) -> const Block* {
+            std::set<PP> pps_fst = program_points(sc.fst_);
+            if (pps_fst.contains(pp)) {
+                return get_block(sc.fst_, pp);
+            }
+
+            std::set<PP> pps_snd = program_points(sc.snd_);
+            if (pps_snd.contains(pp)) {
+                return get_block(sc.snd_, pp);
+            }
+
+            return nullptr;
+        } 
+    };
+        
+    return std::visit(visitor, *stmt);
+} 
 
 std::set<const Block*, BlockPtrCmp> blocks(const std::unique_ptr<Stmt>& stmt) {
     std::set<const Block*, BlockPtrCmp> bs{};
@@ -246,8 +327,6 @@ namespace io {
                 printer.print(*(cond_block->bexp_));
                 std::cout << "]^";
                 std::cout << cond_block->pp_;
-            } else {
-                std::cout << "\tunknown block type!\n";
             }
 
             if (std::next(it) != blocks.end()) {

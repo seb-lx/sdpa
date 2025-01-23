@@ -23,9 +23,11 @@ void run(char *argv[]) {
     const auto fvs = dfa_utils::free_variables_stmt(stmt);
     const auto pps = dfa_utils::program_points(stmt);
     const auto bs = dfa_utils::blocks(stmt);
+    const auto b = dfa_utils::get_block(stmt, 7);
     dfa_utils::io::print_var_set(fvs);
     dfa_utils::io::print_pp_set(pps);
     dfa_utils::io::print_block_set(bs);
+    dfa_utils::io::print_block_set({b});
 
     //ASTPrinter printer{};
     //printer.print_AST(*stmt);
