@@ -6,6 +6,7 @@
 
 #include "ast.hpp"
 #include "ast_printer.hpp"
+#include "set_utils.hpp"
 
 
 // https://www.cppstories.com/2019/02/2lines3featuresoverload.html/
@@ -19,21 +20,6 @@ namespace dfa_utils
 {
 
 using ControlFlowEdge = std::pair<PP, PP>;
-
-
-/*
-namespace {
-    const Block* find_block_in_stmt(const std::unique_ptr<Stmt>& stmt, const PP& pp) {
-        if (!stmt) return nullptr;
-
-        std::set<PP> pps = program_points(stmt);
-        if (pps.contains(pp)) {
-            return get_block(stmt, pp);
-        }
-        
-        return nullptr;
-    }
-}*/
 
 
 // Custom comparator for Block pointer
@@ -299,12 +285,14 @@ bool well_formed(const std::unique_ptr<Stmt>& stmt) {
             auto pps_then = program_points(i.then_);
             auto pps_else = program_points(i.else_);
 
-            bool then_else_intersect = set_utilities::intersect(pps_then, pps_else);
+            auto then_else_intersect = set_utils::intersect(pps_then, pps_else);
 
             bool pp_in_then = pps_then.contains(i.cond_->pp_);
             bool pp_in_else = pps_else.contains(i.cond_->pp_);
 
-            return well_formed_then && well_formed_else && !then_else_intersect && !pp_in_then && !pp_in_else;
+            auto res = well_formed_then && well_formed_else && then_else_intersect.empty() && !pp_in_then && !pp_in_else;
+
+            return res;
         },
         [](const While& w) {
             bool well_formed_body = well_formed(w.body_);
@@ -313,7 +301,9 @@ bool well_formed(const std::unique_ptr<Stmt>& stmt) {
 
             bool pp_in_body = pps_body.contains(w.cond_->pp_);
 
-            return well_formed_body && !pp_in_body;
+            auto res = well_formed_body && !pp_in_body;
+
+            return res;
         },
         [](const SeqComp& sc) {
             bool well_formed_fst = well_formed(sc.fst_);
@@ -322,9 +312,11 @@ bool well_formed(const std::unique_ptr<Stmt>& stmt) {
             auto pps_fst = program_points(sc.fst_);
             auto pps_snd = program_points(sc.snd_);
 
-            bool fst_snd_intersect = set_utilities::intersect(pps_fst, pps_fst);
+            auto fst_snd_intersect = set_utils::intersect(pps_fst, pps_snd);
 
-            return well_formed_fst && well_formed_snd && !fst_snd_intersect;
+            auto res = well_formed_fst && well_formed_snd && fst_snd_intersect.empty();
+
+            return res;
         }
     };
 
@@ -336,10 +328,10 @@ unsigned int pp_occurences(const std::unique_ptr<Stmt>& stmt, const PP pp) {
 
     auto visitor = overload {
         [&pp](const Skip& s) {
-            return (s.pp_ == pp) ? 1 : 0;
+            return (s.pp_ == pp) ? static_cast<unsigned int>(1) : static_cast<unsigned int>(0);
         },
         [&pp](const Assign& a) {
-            return (a.pp_ == pp) ? 1 : 0;
+            return (a.pp_ == pp) ? static_cast<unsigned int>(1) : static_cast<unsigned int>(0);
         },
         [&pp](const If& i) {
             auto pp_occurences_then = pp_occurences(i.then_, pp);
@@ -462,7 +454,11 @@ std::set<ControlFlowEdge> control_flow(const std::unique_ptr<Stmt>& stmt) {
             auto initial_pp_body = initial_pp(w.body_);
             auto final_pp_body = final_pps(w.body_);
 
-            std::set<ControlFlowEdge> cross_pp_final_body = set_utilities::cross<PP>(w.cond_->pp_, final_pp_body);
+            
+            std::set<ControlFlowEdge> cross_pp_final_body{};
+            for(const auto& final_pp: final_pp_body) {
+                cross_pp_final_body.insert(std::make_pair(final_pp, w.cond_->pp_));
+            }
 
             cf.merge(control_flow_body);
             cf.insert({w.cond_->pp_, initial_pp_body});
@@ -475,7 +471,10 @@ std::set<ControlFlowEdge> control_flow(const std::unique_ptr<Stmt>& stmt) {
             auto final_pp_fst = final_pps(sc.fst_);
             auto initial_pp_snd = initial_pp(sc.snd_);
 
-            std::set<ControlFlowEdge> cross_final_fst_init_snd = set_utilities::cross<PP>(initial_pp_snd, final_pp_fst);
+            std::set<ControlFlowEdge> cross_final_fst_init_snd{};
+            for(const auto& final_pp: final_pp_fst) {
+                cross_final_fst_init_snd.insert(std::make_pair(final_pp, initial_pp_snd));
+            }
 
             cf.merge(control_flow_fst);
             cf.merge(control_flow_snd);
@@ -520,24 +519,6 @@ bool has_isolated_exits(const std::unique_ptr<Stmt> &stmt)
     return true;
 }
 
-namespace set_utilities {
-
-    template<typename T>
-    bool intersect(const std::set<T>& set1, const std::set<T>& set2) {
-        auto contains_lambda = [&set2](const T& v) {
-            return set2.contains(v);
-        };
-
-        return std::ranges::any_of(set1, contains_lambda);
-    }
-
-    template<typename T>
-    auto cross(T x, const std::set<T>& s) {
-        return s | std::views::transform([x](T num) {
-            return std::make_pair(x, num);
-        });
-    }
-}
 
 namespace io {
     // Printer methods
@@ -588,6 +569,21 @@ namespace io {
             }
 
             if (std::next(it) != blocks.end()) {
+                std::cout << ", ";
+            }
+        }
+        std::cout << " }\n";
+    }
+
+    void print_cf_set(const std::set<ControlFlowEdge>& cf) {
+        std::cout << "Flow: { ";
+
+        for (auto it = cf.cbegin(); it != cf.cend(); ++it) {
+            auto edge = *it;
+
+            std::cout << "(" << edge.first << ", " << edge.second << ")";
+
+            if (std::next(it) != cf.end()) {
                 std::cout << ", ";
             }
         }
