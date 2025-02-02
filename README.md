@@ -28,4 +28,4 @@ Boolean expressions (𝐵𝐸𝑥𝑝)\
 where 𝑜𝑝𝑎, 𝑜𝑝𝑟 ... todo
 
 ## TODO
-- write tests for each dfa utils function
+- try to implement monotone framework and instanciated each analysis (LV, AE, ...) from this template.
