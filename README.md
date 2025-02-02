@@ -28,4 +28,4 @@ Boolean expressions (𝐵𝐸𝑥𝑝)\
 where 𝑜𝑝𝑎, 𝑜𝑝𝑟 ... todo
 
 ## TODO
-- try to implement monotone framework and instanciated each analysis (LV, AE, ...) from this template.
+- try to implement monotone framework base class and instanciated/inherit each analysis (LV, AE, ...) from this template according to lecture.
