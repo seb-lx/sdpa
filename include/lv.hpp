@@ -1,94 +1,93 @@
-// #pragma once
+#pragma once
 
-// #include <vector>
-// #include <set>
+#include "utils.hpp"
+#include "ast.hpp"
+#include "dfa_utils.hpp"
 
-// #include "ast.hpp"
 
-// /**
-//  * Live Variable Analysis (LV-Analysis) can be used to check whether computed values are actually used.
-//  * If values are unused but still assigned to variables, these assignments are redundant.
-//  * 
-//  * LV-Analysis is a backwards analysis which is clear from the definitions of the functions entry and exit.
-//  * 
-//  * Needs a program as input, as well as the ability to compute free variables, control flow, program points, 
-//  * and final program points of the program.
-//  */ 
-// class LiveVariableAnalysis {
-// private:
-//     std::unique_ptr<Stmt> stmt_;        // Statement
-//     std::set<PP> pps_;                  // Program points
-//     std::set<std::pair<PP, PP>> cf_;    // Control flow
-//     std::set<PP> final_pps_;            // Final program points
-//     unsigned int n_;                    // Number of program points
+/**
+ * Live Variable Analysis (LV-Analysis) can be used to check whether computed values are actually used.
+ * If values are unused but still assigned to variables, these assignments are redundant.
+ * 
+ * LV-Analysis is a backwards analysis which is clear from the definitions of the functions entry and exit.
+ * 
+ * Needs a program as input, as well as the ability to compute free variables, control flow, program points, 
+ * and final program points of the program.
+ */ 
+class LiveVariableAnalysis {
+private:
+    const Stmt* stmt_;                  // Statement
+    std::set<PP> pps_;                  // Program points
+    CFG cf_;                            // Control flow
+    std::set<PP> final_pps_;            // Final program points
+    unsigned int n_;                    // Number of program points
 
-// public:
-//     /*
-//      * Initialize the members using the utility functions.
-//      * LV-analysis needs the program points, the control flow, and the final program points.
-//      */
-//     explicit LiveVariableAnalysis(const std::unique_ptr<Stmt> stmt): _stmt(std::move(stmt))
-//     {
-//         // Check if program is well-formed
-//         if (!is_program_well_formed(stmt)) throw std::runtime_error("Program is not well-formed!");
+public:
+    /*
+     * Initialize the members using the utility functions.
+     * LV-analysis needs the program points, the control flow, and the final program points.
+     */
+    explicit LiveVariableAnalysis(const Stmt* stmt): stmt_{stmt}
+    {
+        // Check if program is well-formed
+        if (!dfa_utils::well_formed(stmt)) throw std::runtime_error("Program is not well-formed!");
 
-//         // Calculate program points and their size
-//         _pps = program_points(stmt);
-//         n = pps.size();
+        // Check if program has isolated exits which is needed to perform LV analysis
+        //  note: since unique ptrs are used its hard to add another statement without moving
+        //        needs to be done manually atm
+        if (!dfa_utils::has_isolated_exits(stmt)) throw std::runtime_error("Program does not have isolated exits!");
 
-//         this->check_and_enforce_analysis_constraints();
+        // calculate set of pps and its size, init control-flow and final program points 
+        init(stmt);
+    }
 
-//         // Init control-flow, final program points, recalculate set of pps and its size
-//         this->init();
-//     }
+    /*
+     * The function compute that calculates the live variables at each program point.
+     */
+    [[nodiscard]] auto compute() const -> LiveVariablesVec;
 
-//     /*
-//      * The function compute that calculates the live variables at each program point.
-//      */
-//     [[nodiscard]] std::vector<std::set<Var>> compute() const;
+    /*
+     * The function F_LV that makes one analysis iteration.
+     * vec = F_LV(vec)
+     */
+    [[nodiscard]] auto F_LV(const LiveVariablesVec& v) const -> LiveVariablesVec;
 
-//     /*
-//      * The function F_LV that makes one analysis iteration.
-//      * vec = F_LV(vec)
-//      */
-//     [[nodiscard]] std::vector<std::set<Var>> F_LV(const std::vector<std::set<Var>>& v) const;
+    /*
+     * Checks whether a fixpoint is reached, i.e. the vectors contain the same sets with the same elements.
+     */
+    [[nodiscard]] static bool fixpoint_reached(const LiveVariablesVec& vec_1, const LiveVariablesVec& vec_2);
+                                               
 
-//     /*
-//      * Checks whether a fixpoint is reached, i.e. the vectors contain the same sets with the same elements.
-//      */
-//     [[nodiscard]] static bool fixpoint_reached(const std::vector<std::set<Var>>& vec_1,
-//                                                const std::vector<std::set<Var>>& vec_2);
+    /*
+     * Injective function that maps indices {0, ... , n-1} to program points.
+     */
+    [[nodiscard]] PP f(unsigned int i) const;
 
-//     /*
-//      * Injective function that maps indices {0, ... , n-1} to program points.
-//      */
-//     [[nodiscard]] PP f(unsigned int i) const;
+    /*
+     * Generates a variable x for an elementary block iff x is read by this elementary block.
+     */
+    [[nodiscard]] auto gen_LV(const Block* block) const -> LiveVariables;
 
-//     /*
-//      * Generates a variable x for an elementary block iff x is read by this elementary block.
-//      */
-//     [[nodiscard]] std::set<Var> gen_LV(const std::shared_ptr<Block>& block) const;
+    /*
+     * Kills a variable x for an elementary block iff x might be modified by this elementary block.
+     */
+    [[nodiscard]] auto kill_LV(const Block* block) const -> LiveVariables;
 
-//     /*
-//      * Kills a variable x for an elementary block iff x might be modified by this elementary block.
-//      */
-//     [[nodiscard]] std::set<Var> kill_LV(const std::shared_ptr<Block>& block) const;
+    /*
+     * Prints the result to cout.
+     */
+    static void print_result(const LiveVariablesVec& res);
 
-//     /*
-//      * Prints the result to cout.
-//      */
-//     static void print_result(const std::vector<std::set<Var>> &res);
+private:
+    /*
+     * This function checks whether the constraints for the LV-analysis are met,
+     * i.e. if the given statement/program has isolated exits.
+     * If not, a simple skip statement is added at the end to ensure it works correctly.
+     */
+    //void check_and_enforce_analysis_constraints(const std::unique_ptr<Stmt>& stmt);
 
-// private:
-//     /*
-//      * This function checks whether the constraints for the LV-analysis are met,
-//      * i.e. if the given statement/program has isolated exits.
-//      * If not, a simple skip statement is added at the end to ensure it works correctly.
-//      */
-//     void check_and_enforce_analysis_constraints();
-
-//     /*
-//      * Calculates and initializes all information that is needed for the LV-analysis.
-//      */
-//     void init();
-// };
+    /*
+     * Calculates and initializes all information that is needed for the LV-analysis.
+     */
+    void init(const Stmt* stmt);
+};

@@ -1,24 +1,19 @@
-#include <set>
-#include <ranges>
+#pragma once
 
-namespace set_utils {
-    template<typename T>
-    std::set<T> intersect(const std::set<T>& set1, const std::set<T>& set2) {
-        std::set<T> res;
-        std::set_intersection(set1.begin(), set1.end(), set2.begin(), set2.end(),
-                              std::inserter(res, res.begin()));
+#include "utils.hpp"
 
-        return res;
-    }   
 
-    /*
+std::set<PP> pp_set_intersect(const std::set<PP>& set1, const std::set<PP>& set2);
 
-    template<typename T>
-    bool intersect(const std::set<T>& set1, const std::set<T>& set2) {
-        auto contains_lambda = [&set2](const T& v) {
-            return set2.contains(v);
-        };
+/**
+ * Calculates set1 \ set2, i.e. all values in set1 that are not in set2
+ */
+auto var_ptr_set_difference(
+    const std::set<const Var*, VarPtrCmp>& set1,
+    const std::set<const Var*, VarPtrCmp>& set2
+) -> std::set<const Var*, VarPtrCmp>;
 
-        return std::ranges::any_of(set1, contains_lambda);
-    }*/
-}
+bool var_ptr_set_equality(
+    const std::set<const Var*, VarPtrCmp>& set1,
+    const std::set<const Var*, VarPtrCmp>& set2
+);
