@@ -25,7 +25,5 @@ Boolean expressions (𝐵𝐸𝑥𝑝)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| (𝑛𝑜𝑡 𝑏)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| (𝑏 𝑜𝑝𝑏 𝑏)
 
-where 𝑜𝑝𝑎, 𝑜𝑝𝑟 ... todo
-
 ## TODO
-- try to implement monotone framework base class and instanciated/inherit each analysis (LV, AE, ...) from this template according to lecture.
+- AE, ...
