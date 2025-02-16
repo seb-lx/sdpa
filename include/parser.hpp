@@ -26,9 +26,9 @@ public:
     explicit Parser(std::vector<Token>);
 
     Parser(const Parser&) = delete;
-	Parser(Parser&&) = delete;
-	auto operator=(const Parser&) -> Parser& = delete;
-	auto operator=(Parser&&) -> Parser& = delete; 
+    Parser(Parser&&) = delete;
+    auto operator=(const Parser&) -> Parser& = delete;
+    auto operator=(Parser&&) -> Parser& = delete; 
 
     [[nodiscard]] std::unique_ptr<Stmt> parse();
 
