@@ -18,7 +18,7 @@ void run(char *argv[]) {
     const auto tokens = lexer.tokenize();
     //lexer.print_tokens( tokens );
 
-    Parser parser{tokens};
+    Parser parser { tokens };
     const auto stmt = parser.parse();
 
     testing_dfa_utils(stmt.get());
@@ -26,7 +26,7 @@ void run(char *argv[]) {
     //ASTPrinter printer{};
     //printer.print_AST(*stmt);
 
-    LiveVariableAnalysis lv{ stmt.get() };
+    LiveVariableAnalysis lv { stmt.get() };
     auto lvs = lv.compute();
     LiveVariableAnalysis::print_result(lvs);
 }
