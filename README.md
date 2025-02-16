@@ -32,3 +32,7 @@ where
 - 𝑜𝑝𝑎 ranges over the set of arithmetic operations
 - 𝑜𝑝𝑏 ranges over the set of boolean operations
 - 𝑜𝑝𝑟 ranges over the set of relational operations
+
+
+## Process and Files
+The lexer ([lexer.hpp](./include/lexer.hpp) and ([lexer.cpp](./include/lexer.cpp)) returns a list of tokens given the program text. The parser ...
