@@ -3,7 +3,7 @@
 This is an implementation of the simple While Language (WL) along with some data-flow analyses (currently only Live-Variables Analysis) from the course "Static and Dynamic Program Analysis" in the winter term 2023/24 at TU Darmstadt.
 
 ## While Language (WL)
-WL is a simple imperative language that supports computation on integer values, where data is stored in variables, and state is changed by assignments.
+WL is a simple imperative language that supports computation on integer values, where data is stored in variables, and state is changed by assignments. [Example programs](./resources/).
 
 ###  Grammar (BNF)
 Programs (𝑆𝑡𝑚𝑡)\
@@ -35,4 +35,5 @@ where
 
 
 ## Process and Files
-The lexer ([lexer.hpp](./include/lexer.hpp) and ([lexer.cpp](./include/lexer.cpp)) returns a list of tokens given the program text. The parser ...
+The lexer returns a list of [Tokens](./include/token.hpp) given the program text. The parser takes in the tokens and returns the program represented as [AST](./include/ast.hpp).
+The data-flow analyses process this AST structure of the input program, for example to calculate live variables. 
