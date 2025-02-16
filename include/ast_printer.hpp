@@ -23,7 +23,6 @@ struct ASTSimplePrinter {
     }
 
     void operator()(const If& stmt) const {
-        //todo
         std::cout << "If(\n";
         print(*stmt.cond_->bexp_);
         std::cout << ",\n";
@@ -36,7 +35,6 @@ struct ASTSimplePrinter {
     }
 
     void operator()(const While& stmt) const {
-        //todo
         std::cout << "While(\n";
         print(*stmt.cond_->bexp_);
         std::cout << ",\n";
@@ -47,7 +45,6 @@ struct ASTSimplePrinter {
     }
 
     void operator()(const SeqComp& stmt) const {
-        //todo
         std::cout << "SeqComp(\n";
         print(*stmt.fst_);
         std::cout << ",\n";
