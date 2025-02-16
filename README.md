@@ -1,6 +1,6 @@
 # sdpa
 
-This is an implementation of the simple While Language (WL) along with some data-flow analyses from the course "Static and Dynamic Program Analysis" in the winter term 2023/24 at TU Darmstadt.
+This is an implementation of the simple While Language (WL) along with some data-flow analyses (currently only Live-Variables Analysis) from the course "Static and Dynamic Program Analysis" in the winter term 2023/24 at TU Darmstadt.
 
 ## While Language (WL)
 WL is a simple imperative language that supports computation on integer values, where data is stored in variables, and state is changed by assignments.
@@ -25,5 +25,10 @@ Boolean expressions (𝐵𝐸𝑥𝑝)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| (𝑛𝑜𝑡 𝑏)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| (𝑏 𝑜𝑝𝑏 𝑏)
 
-## TODO
-- AE, ...
+where
+- n ranges over the set of numerals
+- x ranges over the set of program variables
+- 𝜋 ranges over the set of program points
+- 𝑜𝑝a ranges over the set of arithmetic operations
+- 𝑜𝑝b ranges over the set of boolean operations
+- 𝑜𝑝𝑟 ranges over the set of relational operations
