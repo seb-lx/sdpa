@@ -25,7 +25,7 @@ Boolean expressions (𝐵𝐸𝑥𝑝)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| (𝑛𝑜𝑡 𝑏)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| (𝑏 𝑜𝑝𝑏 𝑏)
 
-where\
+where
 - 𝑛 ranges over the set of numerals
 - 𝑥 ranges over the set of program variables
 - 𝜋 ranges over the set of program points
