@@ -25,10 +25,10 @@ Boolean expressions (𝐵𝐸𝑥𝑝)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| (𝑛𝑜𝑡 𝑏)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| (𝑏 𝑜𝑝𝑏 𝑏)
 
-where
-- n ranges over the set of numerals
-- x ranges over the set of program variables
+where\
+- 𝑛 ranges over the set of numerals
+- 𝑥 ranges over the set of program variables
 - 𝜋 ranges over the set of program points
-- 𝑜𝑝a ranges over the set of arithmetic operations
-- 𝑜𝑝b ranges over the set of boolean operations
+- 𝑜𝑝𝑎 ranges over the set of arithmetic operations
+- 𝑜𝑝𝑏 ranges over the set of boolean operations
 - 𝑜𝑝𝑟 ranges over the set of relational operations
